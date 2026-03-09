@@ -2,38 +2,38 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Genially Builder v15.0</title>
+    <title>Genially Game Builder v16.0</title>
     <style>
         :root { --accent: #bc13fe; }
         body { font-family: sans-serif; margin: 0; display: flex; height: 100vh; background: #111; color: white; }
-        #panel { width: 350px; background: #1a1a1a; padding: 20px; overflow-y: auto; border-right: 2px solid var(--accent); box-sizing: border-box; }
+        #panel { width: 360px; background: #1a1a1a; padding: 20px; overflow-y: auto; border-right: 2px solid var(--accent); box-sizing: border-box; }
         .card { background: #252525; padding: 10px; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid var(--accent); }
         input { width: 100%; padding: 8px; margin: 5px 0; background: #000; color: #00f7ff; border: 1px solid #444; border-radius: 4px; box-sizing: border-box; }
         label { font-size: 11px; color: #888; text-transform: uppercase; display: block; margin-top: 10px; }
         #view { flex-grow: 1; padding: 20px; background: #000; display: flex; flex-direction: column; }
-        .win { flex-grow: 1; border: 1px solid #333; border-radius: 10px; overflow: hidden; background: #050505; }
+        .preview-win { flex-grow: 1; border: 1px solid #333; border-radius: 12px; overflow: hidden; background: #050505; position: relative; }
         .btn-copy { background: var(--accent); color: white; padding: 15px; width: 100%; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 10px; }
     </style>
 </head>
 <body>
 
 <div id="panel">
-    <h2>Editor v15.0</h2>
+    <h2>Editor v16.0</h2>
     <label>Герой (URL):</label>
     <input type="text" id="h-url" value="https://cdn-icons-png.flaticon.com/512/616/616430.png" oninput="draw()">
     <label>Цвет лестницы:</label>
     <input type="color" id="h-col" value="#bc13fe" oninput="draw()">
-    <label>При победе:</label>
-    <input type="text" id="w-msg" value="МОЛОДЕЦ! ТЫ ПОБЕДИЛ!" oninput="draw()">
-    <label>При проигрыше:</label>
-    <input type="text" id="l-msg" value="ИГРА ОКОНЧЕНА" oninput="draw()">
+    <label>Текст победы:</label>
+    <input type="text" id="w-msg" value="УРА! ТЫ ПОБЕДИЛ!" oninput="draw()">
+    <label>Текст проигрыша:</label>
+    <input type="text" id="l-msg" value="ОЙ! ПОПРОБУЙ ЕЩЕ РАЗ" oninput="draw()">
     
     <div id="q-list"></div>
-    <button class="btn-copy" onclick="copyIt()">КОПИРОВАТЬ КОД</button>
+    <button class="btn-copy" onclick="copyIt()">СКОПИРОВАТЬ КОД</button>
 </div>
 
 <div id="view">
-    <div id="f-box" class="win"></div>
+    <div id="f-box" class="preview-win"></div>
 </div>
 
 <script>
@@ -71,7 +71,7 @@
         const lm = document.getElementById('l-msg').value;
         const data = JSON.stringify(qs);
 
-        return `<iframe srcdoc='<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body,html{margin:0;padding:0;overflow:hidden;background:#000;height:600px;width:1000px;font-family:sans-serif}#q{position:absolute;top:150px;left:400px;transform:translate(-50%,-50%);background:rgba(20,20,20,0.95);border:2px solid ${col};border-radius:20px;padding:25px;width:280px;color:#fff;text-align:center;z-index:100;box-shadow:0 0 30px ${col}55;display:none}.bt{background:rgba(255,255,255,0.1);border:1px solid ${col};color:#fff;width:100%;padding:10px;margin:5px 0;border-radius:10px;cursor:pointer;font-weight:bold}#s{position:absolute;top:10px;left:10px;z-index:110;display:flex;gap:5px}.i{background:rgba(0,0,0,0.8);color:#fff;padding:5px 10px;border-radius:8px;border:1px solid ${col};font-size:12px}canvas{display:block}</style></head><body><div id="s"><div class="i" id="hp">❤️ ❤️ ❤️</div><div class="i" id="st">STEP: 1/14</div></div><div id="q"><div id="qt" style="font-size:18px;margin-bottom:15px"></div><div id="as"></div></div><canvas id="c" width="1000" height="600"></canvas><script>const img=new Image();img.src="${h}";const cvs=document.getElementById("c"),ctx=cvs.getContext("2d"),tasks=${data};let cur=0,liv=3,jT=1,sP={x:30,y:550},tP={x:30,y:550},hP={x:30,y:550};const pls=[];for(let i=0;i<15;i++){pls.push({x:30+(i*55),y:550-(i*28)})}function dP(x,y,a){ctx.save();ctx.translate(x,y);ctx.fillStyle=a?"${col}":"rgba(80,80,80,0.3)";ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(25,-12);ctx.lineTo(50,0);ctx.lineTo(25,12);ctx.closePath();ctx.fill();ctx.restore()}function dH(x,y,t){const b=Math.sin(t*Math.PI)*40;if(img.complete)ctx.drawImage(img,x,y-b-60,50,60)}function u(){ctx.clearRect(0,0,1000,600);pls.forEach((p,i)=>dP(p.x,p.y,i<=cur));if(jT<1){jT+=0.06;hP.x=sP.x+(tP.x-sP.x)*jT;hP.y=sP.y+(tP.y-sP.y)*jT;if(jT>=1){jT=1;if(cur<14)uQ();else f(true)}}dH(hP.x,hP.y,jT);requestAnimationFrame(u)}function f(w){const b=document.getElementById("q");b.style.display="block";b.innerHTML="<h2>"+(w?"${wm}":"${lm}")+"</h2><button class=\'bt\' onclick=\'location.reload()\'>RESTART</button>"}function uQ(){document.getElementById("st").innerText="STEP: "+(cur+1)+"/14";document.getElementById("q").style.display="block";document.getElementById("qt").innerText=tasks[cur].q;const b=document.getElementById("as");b.innerHTML="";tasks[cur].a.forEach((t,i)=>{const btn=document.createElement("button");btn.className="bt";btn.innerText=t;btn.onclick=()=>{if(i===tasks[cur].c){document.getElementById("q").style.display="none";sP={x:hP.x,y:hP.y};cur++;tP={x:pls[cur].x,y:pls[cur].y};jT=0}else{liv--;document.getElementById("hp").innerText="❤️ ".repeat(liv);if(liv<=0)f(false)}};b.appendChild(btn)})}img.onload=()=>{uQ();u()};if(img.complete)img.onload();<\/script></body></html>' style='width:100%;height:600px;border:none;'></iframe>`;
+        return `<iframe srcdoc='<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body,html{margin:0;padding:0;overflow:hidden;background:#000;height:600px;width:100%;font-family:sans-serif}.step{position:absolute;width:50px;height:10px;background:${col};border-radius:10px;box-shadow:0 5px 15px ${col}66;transition:0.3s;opacity:0.2}.step.on{opacity:1;border:1px solid #fff}#hero{position:absolute;width:50px;height:60px;z-index:10;transition:0.5s;bottom:0}#box{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(20,20,20,0.98);border:2px solid ${col};border-radius:20px;padding:25px;width:260px;color:#fff;text-align:center;z-index:100;display:none;box-shadow:0 0 40px #000}#ui{position:absolute;top:10px;left:10px;color:#fff;z-index:110;display:flex;gap:8px}.inf{background:rgba(0,0,0,0.8);padding:6px 12px;border-radius:8px;border:1px solid ${col};font-size:12px}.btn{background:rgba(255,255,255,0.1);border:1px solid ${col};color:#fff;width:100%;padding:10px;margin:5px 0;border-radius:10px;cursor:pointer;font-weight:bold}</style></head><body><div id="ui"><div class="inf" id="hp">❤️ ❤️ ❤️</div><div class="inf" id="st">STEP: 1/14</div></div><img id="hero" src="${h}"><div id="box"><div id="qt" style="font-size:18px;margin-bottom:15px"></div><div id="as"></div></div><script>const tasks=${data};let cur=0,liv=3;const hr=document.getElementById("hero");const pls=[];for(let i=0;i<15;i++){const p=document.createElement("div");p.className="step";p.style.left=(20+(i*55))+"px";p.style.top=(500-(i*28))+"px";document.body.appendChild(p);pls.push(p)}function upd(){const t=pls[cur];hr.style.left=(parseInt(t.style.left))+"px";hr.style.top=(parseInt(t.style.top)-60)+"px";pls.forEach((p,i)=>p.classList.toggle("on",i<=cur))}function ask(){if(cur>=14){fin(true);return}document.getElementById("st").innerText="STEP: "+(cur+1)+"/14";const b=document.getElementById("box");b.style.display="block";document.getElementById("qt").innerText=tasks[cur].q;const a=document.getElementById("as");a.innerHTML="";tasks[cur].a.forEach((t,i)=>{const btn=document.createElement("button");btn.className="btn";btn.innerText=t;btn.onclick=()=>{if(i===tasks[cur].c){cur++;b.style.display="none";upd();setTimeout(ask,500)}else{liv--;document.getElementById("hp").innerText="❤️ ".repeat(liv);if(liv<=0)fin(false)}};a.appendChild(btn)})}function fin(w){const b=document.getElementById("box");b.style.display="block";b.innerHTML="<h2>"+(w?"${wm}":"${lm}")+"</h2><button class=\'btn\' onclick=\'location.reload()\'>RESTART</button>"}upd();setTimeout(ask,500);<\/script></body></html>' style='width:100%;height:600px;border:none;'></iframe>`.replace(/\n/g, '');
     }
 
     function draw() { document.getElementById('f-box').innerHTML = getCode(); }
