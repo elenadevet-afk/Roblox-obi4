@@ -2,33 +2,38 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Genially Game Builder v20.0</title>
+    <title>Genially Game Builder v21.0</title>
     <style>
         :root { --accent: #bc13fe; }
-        body { font-family: sans-serif; margin: 0; display: flex; height: 100vh; background: #222; color: white; }
-        #panel { width: 350px; background: #1a1a1a; padding: 20px; overflow-y: auto; border-right: 2px solid var(--accent); }
-        .card { background: #333; padding: 10px; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid var(--accent); }
-        input { width: 100%; padding: 8px; margin: 5px 0; background: #000; color: #fff; border: 1px solid #444; border-radius: 4px; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; height: 100vh; background: #1a1a1a; color: white; }
+        #panel { width: 360px; background: #252525; padding: 20px; overflow-y: auto; border-right: 2px solid var(--accent); }
+        .card { background: #333; padding: 12px; border-radius: 10px; margin-bottom: 12px; border-left: 5px solid var(--accent); }
+        input { width: 100%; padding: 10px; margin: 5px 0; background: #111; color: #fff; border: 1px solid #444; border-radius: 6px; box-sizing: border-box; }
+        label { font-size: 11px; color: #aaa; text-transform: uppercase; font-weight: bold; display: block; margin-top: 10px; }
         #view { flex-grow: 1; padding: 20px; background: #444; display: flex; flex-direction: column; }
-        .preview-win { flex-grow: 1; border: 2px solid #555; border-radius: 12px; background: #2c2c2c; position: relative; }
-        .btn-copy { background: var(--accent); color: white; padding: 15px; width: 100%; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        .preview-win { flex-grow: 1; border: 3px solid #555; border-radius: 15px; background: #2c2c2c; position: relative; overflow: hidden; }
+        .btn-copy { background: var(--accent); color: white; padding: 18px; width: 100%; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 14px; box-shadow: 0 4px 15px rgba(188, 19, 254, 0.3); }
     </style>
 </head>
 <body>
 
 <div id="panel">
-    <h2>Editor v20.0</h2>
-    <label>Герой (URL):</label>
+    <h2 style="color:var(--accent)">Editor v21.0</h2>
+    
+    <label>Картинка героя (URL):</label>
     <input type="text" id="h-url" value="https://cdn-icons-png.flaticon.com/512/616/616430.png" oninput="draw()">
-    <label>Цвет лестницы:</label>
+    
+    <label>Цвет ступенек:</label>
     <input type="color" id="h-col" value="#bc13fe" oninput="draw()">
-    <label>Победа:</label>
-    <input type="text" id="w-msg" value="EXCELLENT! YOU WIN!" oninput="draw()">
-    <label>Проигрыш:</label>
-    <input type="text" id="l-msg" value="TRY AGAIN!" oninput="draw()">
+
+    <label>Сообщение при победе:</label>
+    <input type="text" id="w-msg" value="МОЛОДЕЦ! ТЫ ВСЁ ЗНАЕШЬ!" oninput="draw()">
+
+    <label>Сообщение при ошибке:</label>
+    <input type="text" id="l-msg" value="ОШИБКА! ПОПРОБУЙ ЕЩЕ РАЗ" oninput="draw()">
     
     <div id="q-list"></div>
-    <button class="btn-copy" onclick="copyIt()">СКОПИРОВАТЬ КОД</button>
+    <button class="btn-copy" onclick="copyIt()">СКОПИРОВАТЬ КОД ДЛЯ GENIALLY</button>
 </div>
 
 <div id="view">
@@ -36,14 +41,30 @@
 </div>
 
 <script>
-    let qs = Array(14).fill().map((_, i) => ({ q: `Question ${i+1}?`, a: ["Right", "Wrong", "Wrong"], c: 0 }));
+    // Задания по умолчанию
+    let qs = [
+        {q:"Apple?", a:["Яблоко","Груша","Банан"], c:0},
+        {q:"Cat?", a:["Собака","Кот","Лев"], c:1},
+        {q:"Red?", a:["Синий","Красный","Зеленый"], c:1},
+        {q:"One+One?", a:["1","2","3"], c:1},
+        {q:"Sun?", a:["Луна","Звезда","Солнце"], c:2},
+        {q:"Water?", a:["Вода","Огонь","Земля"], c:0},
+        {q:"Big?", a:["Малый","Большой","Средний"], c:1},
+        {q:"Mother?", a:["Папа","Мама","Брат"], c:1},
+        {q:"Green?", a:["Зеленый","Желтый","Серый"], c:0},
+        {q:"Friend?", a:["Враг","Друг","Сосед"], c:1},
+        {q:"Jump?", a:["Бег","Прыжок","Сон"], c:1},
+        {q:"Book?", a:["Книга","Ручка","Лист"], c:0},
+        {q:"Dog?", a:["Кот","Собака","Волк"], c:1},
+        {q:"Sky?", a:["Земля","Небо","Трава"], c:1}
+    ];
 
     function render() {
         const c = document.getElementById('q-list'); c.innerHTML = '';
         qs.forEach((q, i) => {
             const d = document.createElement('div'); d.className = 'card';
             d.innerHTML = `<input type="text" value="${q.q}" oninput="qs[${i}].q=this.value;draw()">
-            <div style="display:flex;gap:2px"><input type="text" value="${q.a[0]}" oninput="qs[${i}].a[0]=this.value;draw()"><input type="text" value="${q.a[1]}" oninput="qs[${i}].a[1]=this.value;draw()"><input type="text" value="${q.a[2]}" oninput="qs[${i}].a[2]=this.value;draw()"></div>`;
+            <div style="display:flex;gap:4px"><input type="text" value="${q.a[0]}" oninput="qs[${i}].a[0]=this.value;draw()"><input type="text" value="${q.a[1]}" oninput="qs[${i}].a[1]=this.value;draw()"><input type="text" value="${q.a[2]}" oninput="qs[${i}].a[2]=this.value;draw()"></div>`;
             c.appendChild(d);
         });
     }
@@ -51,20 +72,21 @@
     function getCode() {
         const h = document.getElementById('h-url').value;
         const col = document.getElementById('h-col').value;
-        const win = document.getElementById('w-msg').value;
-        const lose = document.getElementById('l-msg').value;
+        const wm = document.getElementById('w-msg').value;
+        const lm = document.getElementById('l-msg').value;
         const data = JSON.stringify(qs);
 
         let stepsHtml = '';
         for(let i=0; i<15; i++) {
-            stepsHtml += `<div id="s${i}" style="position:absolute; width:50px; height:15px; background:#666; left:${5+i*6}%; bottom:${10+i*5}%; border-radius:5px; border-bottom:3px solid #000; z-index:5;"></div>`;
+            // Увеличили разброс: left +7%, bottom +6% — теперь они далеко друг от друга
+            stepsHtml += `<div id="s${i}" class="st" style="left:${4+i*6.5}%; bottom:${8+i*5.8}%"></div>`;
         }
 
-        return `<iframe srcdoc='<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body,html{margin:0;padding:0;overflow:hidden;background:#2c2c2c;height:600px;width:100%;font-family:sans-serif}#hero{position:absolute;width:45px;height:55px;z-index:20;bottom:0;left:0;display:block}#box{position:absolute;top:30%;left:50%;transform:translate(-50%,-50%);background:#fff;border:4px solid ${col};border-radius:20px;padding:25px;width:260px;color:#000;text-align:center;z-index:100;box-shadow:0 10px 40px rgba(0,0,0,0.5)}#ui{position:absolute;top:10px;left:10px;z-index:110;display:flex;gap:5px}.inf{background:#fff;color:#000;padding:5px 12px;border-radius:8px;border:2px solid ${col};font-weight:bold;font-size:13px}.btn{background:${col};color:#fff;width:100%;padding:12px;margin:6px 0;border:none;border-radius:12px;cursor:pointer;font-weight:bold}</style></head><body><div id="ui"><div class="inf" id="hp">❤️ ❤️ ❤️</div><div class="inf" id="st">STEP: 1/14</div></div>${stepsHtml}<img id="hero" src="${h}"><div id="box"><div id="qt" style="font-size:18px;margin-bottom:15px"></div><div id="as"></div></div><script>const tasks=${data};let cur=0,liv=3;const hr=document.getElementById("hero");function upd(){for(let i=0;i<15;i++){const s=document.getElementById("s"+i);if(i<=cur){s.style.background="${col}";s.style.borderColor="#fff"}else{s.style.background="#666";s.style.borderColor="#000"}}const t=document.getElementById("s"+cur);hr.style.left=t.style.left;hr.style.bottom=(parseInt(t.style.bottom)+2.5)+"%"}function ask(){if(cur>=14){fin(true);return}document.getElementById("st").innerText="STEP: "+(cur+1)+"/14";document.getElementById("box").style.display="block";document.getElementById("qt").innerText=tasks[cur].q;const a=document.getElementById("as");a.innerHTML="";tasks[cur].a.forEach((t,i)=>{const btn=document.createElement("button");btn.className="btn";btn.innerText=t;btn.onclick=()=>{if(i===0){cur++;document.getElementById("box").style.display="none";upd();ask()}else{liv--;document.getElementById("hp").innerText="❤️ ".repeat(liv);if(liv<=0)fin(false)}};a.appendChild(btn)})}function fin(w){const b=document.getElementById("box");b.style.display="block";b.innerHTML="<h2>"+(w?"${win}":"${lose}")+"</h2><button class=\'btn\' onclick=\'location.reload()\'>RESTART</button>"}upd();ask();<\/script></body></html>' style='width:100%;height:600px;border:none;'></iframe>`.replace(/\n/g, '');
+        return `<iframe srcdoc='<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body,html{margin:0;padding:0;overflow:hidden;background:#2c2c2c;height:600px;width:100%;font-family:sans-serif}.st{position:absolute;width:55px;height:14px;background:#444;border-radius:10px;border-bottom:4px solid #111;z-index:5;transition:0.3s}.st.on{background:${col};border-bottom-color:#000;box-shadow:0 0 15px ${col}88}#hero{position:absolute;width:50px;height:65px;z-index:20;transition:0.4s;filter:drop-shadow(0 5px 5px rgba(0,0,0,0.5))}#box{position:absolute;top:25%;left:50%;transform:translate(-50%,-50%);background:rgba(255,255,255,0.98);border:4px solid ${col};border-radius:24px;padding:25px;width:280px;text-align:center;z-index:100;box-shadow:0 15px 40px rgba(0,0,0,0.6)}#ui{position:absolute;top:15px;left:15px;z-index:110;display:flex;gap:8px}.inf{background:#fff;color:#000;padding:6px 14px;border-radius:12px;border:2px solid ${col};font-weight:bold;font-size:14px}.btn{background:#f0f0f0;color:#000;width:100%;padding:14px;margin:8px 0;border:2px solid #ddd;border-radius:15px;cursor:pointer;font-weight:bold;font-size:15px;transition:0.2s}.btn:hover{background:${col};color:#fff;border-color:${col}}</style></head><body><div id="ui"><div class="inf" id="hp">❤️ ❤️ ❤️</div><div class="inf" id="st">ВОПРОС: 1/14</div></div>${stepsHtml}<img id="hero" src="${h}"><div id="box"><div id="qt" style="font-size:20px;margin-bottom:20px;color:#000;font-weight:bold"></div><div id="as"></div></div><script>const tasks=${data};let cur=0,liv=3;const hr=document.getElementById("hero");function upd(){for(let i=0;i<15;i++){const s=document.getElementById("s"+i);if(i<=cur){s.classList.add("on")}else{s.classList.remove("on")}}const t=document.getElementById("s"+cur);hr.style.left=(parseFloat(t.style.left)+0.2)+"%";hr.style.bottom=(parseFloat(t.style.bottom)+2.5)+"%"}function ask(){if(cur>=14){fin(true);return}document.getElementById("st").innerText="ВОПРОС: "+(cur+1)+"/14";const b=document.getElementById("box");b.style.display="block";document.getElementById("qt").innerText=tasks[cur].q;const a=document.getElementById("as");a.innerHTML="";tasks[cur].a.forEach((t,i)=>{const btn=document.createElement("button");btn.className="btn";btn.innerText=t;btn.onclick=()=>{if(i===0){cur++;b.style.display="none";upd();setTimeout(ask,500)}else{liv--;document.getElementById("hp").innerText="❤️ ".repeat(liv);if(liv<=0)fin(false)}};a.appendChild(btn)})}function fin(w){const b=document.getElementById("box");b.style.display="block";b.innerHTML="<h2 style=\'color:#000\'>"+(w?"${wm}":"${lm}")+"</h2><button class=\'btn\' style=\'background:${col};color:#fff\' onclick=\'location.reload()\'>ИГРАТЬ СНОВА</button>"}upd();setTimeout(ask,300);<\/script></body></html>' style='width:100%;height:600px;border:none;'></iframe>`.replace(/\n/g, '');
     }
 
     function draw() { document.getElementById('f-box').innerHTML = getCode(); }
-    function copyIt() { const el = document.createElement('textarea'); el.value = getCode(); document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el); alert("Код скопирован!"); }
+    function copyIt() { const el = document.createElement('textarea'); el.value = getCode(); document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el); alert("Код скопирован! Вставляй в Genially."); }
     render(); draw();
 </script>
 </body>
