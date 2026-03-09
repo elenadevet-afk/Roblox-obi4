@@ -2,27 +2,24 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Genially Game Builder v18.0</title>
+    <title>Genially Game Builder v19.0</title>
     <style>
         :root { --accent: #bc13fe; }
-        body { font-family: sans-serif; margin: 0; display: flex; height: 100vh; background: #000; color: white; }
-        #panel { width: 350px; background: #1a1a1a; padding: 20px; overflow-y: auto; border-right: 2px solid var(--accent); }
-        .card { background: #252525; padding: 10px; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid var(--accent); }
-        input { width: 100%; padding: 8px; margin: 5px 0; background: #000; color: #00f7ff; border: 1px solid #444; border-radius: 4px; box-sizing: border-box; }
-        label { font-size: 11px; color: #888; text-transform: uppercase; display: block; margin-top: 10px; }
-        #view { flex-grow: 1; padding: 20px; background: #111; display: flex; flex-direction: column; }
-        .preview-win { flex-grow: 1; border: 1px solid #333; border-radius: 12px; overflow: hidden; background: #000; position: relative; }
+        body { font-family: sans-serif; margin: 0; display: flex; height: 100vh; background: #333; color: white; }
+        #panel { width: 350px; background: #222; padding: 20px; overflow-y: auto; border-right: 2px solid var(--accent); }
+        .card { background: #444; padding: 10px; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid var(--accent); }
+        input { width: 100%; padding: 8px; margin: 5px 0; background: #111; color: #fff; border: 1px solid #666; border-radius: 4px; }
+        #view { flex-grow: 1; padding: 20px; background: #555; display: flex; flex-direction: column; }
+        .preview-win { flex-grow: 1; border: 2px dashed #777; border-radius: 12px; background: #2c2c2c; position: relative; }
         .btn-copy { background: var(--accent); color: white; padding: 15px; width: 100%; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 10px; }
     </style>
 </head>
 <body>
 
 <div id="panel">
-    <h2>Editor v18.0</h2>
-    <label>Герой (PNG URL):</label>
+    <h2>Editor v19.0</h2>
+    <label>Герой (URL):</label>
     <input type="text" id="h-url" value="https://cdn-icons-png.flaticon.com/512/616/616430.png" oninput="draw()">
-    <label>Цвет лестницы:</label>
-    <input type="color" id="h-col" value="#bc13fe" oninput="draw()">
     <label>Победа:</label>
     <input type="text" id="w-msg" value="EXCELLENT! YOU WIN!" oninput="draw()">
     <label>Проигрыш:</label>
@@ -51,18 +48,17 @@
 
     function getCode() {
         const h = document.getElementById('h-url').value;
-        const col = document.getElementById('h-col').value;
         const win = document.getElementById('w-msg').value;
         const lose = document.getElementById('l-msg').value;
         const data = JSON.stringify(qs);
 
         let stepsHtml = '';
         for(let i=0; i<15; i++) {
-            // Рисуем платформы как яркие блоки БЕЗ прозрачности изначально
-            stepsHtml += `<div id="s${i}" style="position:absolute; width:50px; height:12px; background:#444; left:${10+i*5}%; bottom:${15+i*4}%; border-radius:5px; z-index:5; border:1px solid #666;"></div>`;
+            // Теперь это массивные серые плитки, которые невозможно не заметить
+            stepsHtml += `<div id="s${i}" style="position:absolute; width:60px; height:20px; background:#666; left:${5+i*6}%; bottom:${10+i*5}%; border-radius:4px; border-bottom:4px solid #333; z-index:5;"></div>`;
         }
 
-        return `<iframe srcdoc='<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body,html{margin:0;padding:0;overflow:hidden;background:#000;height:600px;width:100%;font-family:sans-serif}#hero{position:absolute;width:50px;height:60px;z-index:20;transition:0.4s;bottom:0;left:0}#box{position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);background:#111;border:3px solid ${col};border-radius:20px;padding:25px;width:260px;color:#fff;text-align:center;z-index:100;box-shadow:0 0 50px #000}#ui{position:absolute;top:10px;left:10px;color:#fff;z-index:110;display:flex;gap:5px}.inf{background:#000;padding:5px 12px;border-radius:8px;border:1px solid ${col};font-size:13px}.btn{background:${col}33;border:1px solid ${col};color:#fff;width:100%;padding:12px;margin:6px 0;border-radius:12px;cursor:pointer;font-weight:bold}</style></head><body><div id="ui"><div class="inf" id="hp">❤️ ❤️ ❤️</div><div class="inf" id="st">STEP: 1/14</div></div>${stepsHtml}<img id="hero" src="${h}"><div id="box"><div id="qt" style="font-size:18px;margin-bottom:15px"></div><div id="as"></div></div><script>const tasks=${data};let cur=0,liv=3;const hr=document.getElementById("hero");function upd(){for(let i=0;i<15;i++){const s=document.getElementById("s"+i);if(i<=cur){s.style.background="${col}";s.style.border="1px solid #fff";s.style.boxShadow="0 0 15px ${col}"}else{s.style.background="#333"}}const t=document.getElementById("s"+cur);hr.style.left=t.style.left;hr.style.bottom=(parseInt(t.style.bottom)+2)+"%"}function ask(){if(cur>=14){fin(true);return}document.getElementById("st").innerText="STEP: "+(cur+1)+"/14";const b=document.getElementById("box");b.style.display="block";document.getElementById("qt").innerText=tasks[cur].q;const a=document.getElementById("as");a.innerHTML="";tasks[cur].a.forEach((t,i)=>{const btn=document.createElement("button");btn.className="btn";btn.innerText=t;btn.onclick=()=>{if(i===0){cur++;b.style.display="none";upd();setTimeout(ask,500)}else{liv--;document.getElementById("hp").innerText="❤️ ".repeat(liv);if(liv<=0)fin(false)}};a.appendChild(btn)})}function fin(w){const b=document.getElementById("box");b.style.display="block";b.innerHTML="<h2>"+(w?"${win}":"${lose}")+"</h2><button class=\'btn\' onclick=\'location.reload()\'>RESTART</button>"}upd();setTimeout(ask,300);<\/script></body></html>' style='width:100%;height:600px;border:none;'></iframe>`.replace(/\n/g, '');
+        return `<iframe srcdoc='<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body,html{margin:0;padding:0;overflow:hidden;background:#2c2c2c;height:600px;width:100%;font-family:sans-serif}#hero{position:absolute;width:50px;height:60px;z-index:20;transition:0.4s;bottom:0;left:0}#box{position:absolute;top:35%;left:50%;transform:translate(-50%,-50%);background:#fff;border:4px solid #bc13fe;border-radius:20px;padding:25px;width:260px;color:#000;text-align:center;z-index:100;box-shadow:0 10px 40px rgba(0,0,0,0.5)}#ui{position:absolute;top:10px;left:10px;z-index:110;display:flex;gap:5px}.inf{background:#fff;color:#000;padding:5px 12px;border-radius:8px;border:2px solid #bc13fe;font-weight:bold;font-size:13px}.btn{background:#bc13fe;color:#fff;width:100%;padding:12px;margin:6px 0;border:none;border-radius:12px;cursor:pointer;font-weight:bold}</style></head><body><div id="ui"><div class="inf" id="hp">❤️ ❤️ ❤️</div><div class="inf" id="st">STEP: 1/14</div></div>${stepsHtml}<img id="hero" src="${h}"><div id="box"><div id="qt" style="font-size:18px;margin-bottom:15px;color:#000"></div><div id="as"></div></div><script>const tasks=${data};let cur=0,liv=3;const hr=document.getElementById("hero");function upd(){for(let i=0;i<15;i++){const s=document.getElementById("s"+i);if(i<=cur){s.style.background="#bc13fe";s.style.borderBottom="4px solid #7a09aa"}else{s.style.background="#666";s.style.borderBottom="4px solid #333"}}const t=document.getElementById("s"+cur);hr.style.left=t.style.left;hr.style.bottom=(parseInt(t.style.bottom)+3)+"%"}function ask(){if(cur>=14){fin(true);return}document.getElementById("st").innerText="STEP: "+(cur+1)+"/14";const b=document.getElementById("box");b.style.display="block";document.getElementById("qt").innerText=tasks[cur].q;const a=document.getElementById("as");a.innerHTML="";tasks[cur].a.forEach((t,i)=>{const btn=document.createElement("button");btn.className="btn";btn.innerText=t;btn.onclick=()=>{if(i===0){cur++;b.style.display="none";upd();setTimeout(ask,600)}else{liv--;document.getElementById("hp").innerText="❤️ ".repeat(liv);if(liv<=0)fin(false)}};a.appendChild(btn)})}function fin(w){const b=document.getElementById("box");b.style.display="block";b.innerHTML="<h2 style=\'color:#000\'>"+(w?"${win}":"${lose}")+"</h2><button class=\'btn\' onclick=\'location.reload()\'>RESTART</button>"}upd();setTimeout(ask,400);<\/script></body></html>' style='width:100%;height:600px;border:none;'></iframe>`.replace(/\n/g, '');
     }
 
     function draw() { document.getElementById('f-box').innerHTML = getCode(); }
